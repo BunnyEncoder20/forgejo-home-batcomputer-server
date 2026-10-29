@@ -1,0 +1,13 @@
+http:
+  routers:
+    forgejo:
+      rule: "Host(`home-batcomputer.tail06df1b.ts.net`)"
+      entryPoints:
+        - web
+      service: forgejo
+
+  services:
+    forgejo:
+      loadBalancer:
+        servers:
+          - url: "http://forgejo:3000"

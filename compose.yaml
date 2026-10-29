@@ -6,12 +6,35 @@ services:
     environment:
       USER_UID: "1000"
       USER_GID: "1000"
+      FORGEJO__server__DOMAIN: "home-batcomputer.tail06df1b.ts.net"
+      FORGEJO__server__ROOT_URL: "https://home-batcomputer.tail06df1b.ts.net/"
+      FORGEJO__server__SSH_DOMAIN: "home-batcomputer.tail06df1b.ts.net"
+      FORGEJO__server__SSH_PORT: "2222"
     ports:
-      - "3000:3000"
       - "2222:22"
     volumes:
       - forgejo-data:/data
+    networks:
+      - forgejo-net
+
+  traefik:
+    image: docker.io/library/traefik:v3.3
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - "--configFile=/etc/traefik/traefik.yml"
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./dynamic.yml:/etc/traefik/dynamic.yml:ro
+    networks:
+      - forgejo-net
 
 volumes:
   forgejo-data:
     name: forgejo-data
+
+networks:
+  forgejo-net:
+    name: forgejo-net
